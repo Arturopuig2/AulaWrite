@@ -1,3 +1,10 @@
+/*
+ La clase OperationView es la pantalla principal donde el alumno hace las
+ operaciones y escribe el resultado.
+ Es, en realidad, el corazón interactivo de tu app de Aula Write.
+
+ */
+
 import SwiftUI
 
 struct OperationView: View {
@@ -13,86 +20,84 @@ struct OperationView: View {
     }
     
     var body: some View {
-        VStack(spacing: 30) {
-            // Operación en vertical
-            VStack(alignment: .trailing, spacing: 8) {
-                Text("\(n1)")
-                    .font(.system(size: 120, weight: .bold, design: .monospaced))
-                    //.frame(maxWidth: .infinity, alignment: .trailing)
-                
-                Text("+ \(n2)")
-                    .font(.system(size: 120, weight: .bold, design: .monospaced))
-                    //.frame(maxWidth: .infinity, alignment: .trailing)
+        ZStack {
+            Image("papel")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .opacity(0.35)              // 👈 Ajusta transparencia aquí
+                .allowsHitTesting(false)   // 👈 MUY IMPORTANTE
 
-                Rectangle()
-                    .frame(width: 120, height: 8)
-                    //.frame(maxWidth: .infinity, alignment: .center)
-            }
-            .frame(maxWidth: .infinity, alignment: .center)   // ← centra el bloque completo
-            .offset(x: -50)
-            
-            // Lienzo para escribir el resultado
-            DigitRecognizerView(predictedDigit: $predictedDigit)
-                .frame(width: 220, height: 200)
-                .offset(x:10)
-            
+            VStack(spacing: 30) {
+                // Operación en vertical
+                VStack(alignment: .trailing, spacing: 8) {
+                    
+                    
+                    Text("\(n1)")
+                        .font(.system(size: 120, weight: .bold, design: .monospaced))
+                    
+                    Text("+ \(n2)")
+                        .font(.system(size: 120, weight: .bold, design: .monospaced))
 
-            //PARA QUE ME MUESTRE EL NÚMERO (Y SABER SI LO ESTÁ RECONOCIENDO BIEN)
-            if !predictedDigit.isEmpty {
-                Text("He reconocido: \(predictedDigit)")
-                    .font(.title2)
-                    .foregroundColor(.blue)
-            }
-
-            // Botones
-            HStack(spacing: 20) {
-                Button("Comprobar") {
-                    checkAnswer()
+                    Rectangle()
+                        .frame(width: 120, height: 8)
                 }
-                .font(.title2)
+                .frame(maxWidth: .infinity, alignment: .center)   // ← centra el bloque completo
+                .offset(x: -50)
                 
-                Button("Siguiente") {
-                    nextExercise()
+                // Lienzo para escribir el resultado
+                DigitRecognizerView(predictedDigit: $predictedDigit)
+                    .frame(width: 200, height: 200)
+                    .offset(x:10)
+                    //.border(Color.black, width: 1)
+                
+
+                //PARA QUE ME MUESTRE EL NÚMERO (Y SABER SI LO ESTÁ RECONOCIENDO BIEN)
+                if !predictedDigit.isEmpty {
+                    Text("He reconocido: \(predictedDigit)")
+                        .font(.title2)
+                        .foregroundColor(.blue)
                 }
-                .font(.title2)
-            }
-            
-            // Feedback
-            if let isCorrect = isCorrect {
-                Text(feedback)
+
+                // Botones
+                HStack(spacing: 20) {
+                    Button("Comprobar") {
+                        checkAnswer()
+                    }
                     .font(.title2)
-                    .foregroundColor(isCorrect ? .green : .red)
+                    
+                    Button("Siguiente") {
+                        nextExercise()
+                    }
+                    .font(.title2)
+                }
+                
+                // Feedback
+                if let isCorrect = isCorrect {
+                    Text(feedback)
+                        .font(.title2)
+                        .foregroundColor(isCorrect ? .green : .red)
+                }
+                
+                Spacer()
+
+                // Botón de acceso al RAG
+                NavigationLink {
+                    RAGChatView()
+                } label: {
+                    Text("RAG")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 70)
+                        .background(Color.blue.opacity(0.15))
+                        .cornerRadius(20)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 10)
             }
-            
-            
-            
-            Spacer()
+            .padding(.top, 60)
+            .padding(.horizontal)
         }
-        .padding(.top, 60)
-        .padding(.horizontal)
-        
-        
-        // -----------------------
-        // BOTÓN DE ACCESO AL RAG EN OTRA PANTALLA
-        // -----------------------
-        NavigationLink {
-            RAGChatView() //LS OTRA PANTALLA
-        } label: {
-            //Image("profesora_chat")
-            Text ("RAG")
-            //Label("IR AL ASISTENTE", systemImage: "bubble.left.and.bubble.right.fill")
-                .font(.headline)
-                //.resizable()
-                .scaledToFit()
-                .frame(width: 70, height: 70)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.blue.opacity(0.15))
-                .cornerRadius(20)
-        }
-        .padding(.horizontal)
-        
-        //---------------------------------------
     }
     
     private func checkAnswer() {
@@ -135,5 +140,7 @@ struct OperationView: View {
 #Preview {
     NavigationStack {
         OperationView()
+            .statusBarHidden(true)
+
     }
 }

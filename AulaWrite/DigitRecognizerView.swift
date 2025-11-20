@@ -1,3 +1,14 @@
+/*
+    Es la mano = la interfaz donde el niño escribe
+     •    Es un View de SwiftUI
+     •    Muestra un lienzo tipo “cuaderno”
+     •    Captura lo que el niño dibuja
+     •    Convierte ese dibujo en un UIImage
+     •    Se lo da a AppleDigitRecognizer para que lo reconozca
+ */
+
+
+
 import SwiftUI
 import PencilKit
 import CoreML
@@ -28,10 +39,15 @@ struct DigitRecognizerView: View {
                 
                 // Tu lienzo
                 CanvasView(canvasView: $canvasView)
+                    //.frame(width: 200, height: 200)
+                    //.frame(maxWidth: .infinity, alignment: .center)
+                    //.background(Color.white)
+                    //.border(Color.black, width: 1)
+                
                     .frame(width: 200, height: 200)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .background(Color.white)
-                    .border(Color.black, width: 2)
+                    .offset(x:0)
+                    .border(Color.black, width: 1)
+                
                 
                 // cuando ya hay predicción, ocultamos el dibujo
                     .opacity(predictedDigit.isEmpty ? 1 : 0)
@@ -40,10 +56,11 @@ struct DigitRecognizerView: View {
                 if !predictedDigit.isEmpty {
                     Text(predictedDigit)
                         .font(.system(size: 120, weight: .bold))   // grande, tipografía estándar
-                        .foregroundColor(.black)
+                        .foregroundColor(.blue)
                         .frame(width: 200, height: 200, alignment: .center)
                         .background(Color.white)
-                        .border(Color.black, width: 2)
+                        .border(Color.black, width: 1)
+
                 }
             }
             
@@ -78,18 +95,41 @@ struct DigitRecognizerView: View {
         }
 }
 
-    
-    
     private func clearCanvas() {
         canvasView.drawing = PKDrawing()
         predictedDigit = ""
     }
     
+    //FUNCIÓN RECONOCIMIENTO DE APPLE
     private func recognizeDigit() {
         print("🔹 Botón RECONOCER pulsado")
         isRunning = true
         
-        let image = canvasToImage()                      // tu función
+        let image = canvasToImage()   // UIImage del lienzo
+        
+        if let digit = AppleDigitRecognizer.shared.predictDigit(from: image) {
+            DispatchQueue.main.async {
+                print("✅ Predicción Apple MNIST:", digit)
+                self.predictedDigit = digit
+                self.isRunning = false
+            }
+        } else {
+            DispatchQueue.main.async {
+                print("❌ No se pudo reconocer el dígito")
+                self.predictedDigit = ""
+                self.isRunning = false
+            }
+        }
+    }
+    
+    // Función: Creo el MLMultiArray y llamo al modelo_digitos
+/*
+    private func recognizeDigit() {
+        print("🔹 Botón RECONOCER pulsado")
+        isRunning = true
+        
+        let image = canvasToImage()
+        
         guard let smallImage = resizeImage(image, to: CGSize(width: 28, height: 28)) else {
             print("❌ No se pudo redimensionar la imagen")
             isRunning = false
@@ -138,24 +178,43 @@ struct DigitRecognizerView: View {
         }
     }
     
+    */
+    
     private func canvasToImage() -> UIImage {
-        // Usamos el contenido del PKCanvasView (canvasView) para crear una UIImage
-        let bounds = canvasView.bounds
+        let drawing = canvasView.drawing
+        var bounds = drawing.bounds
+
+        // Si no hay nada dibujado, devolvemos imagen vacía
         if bounds.isEmpty {
             return UIImage()
         }
-        
-        // Imagen del dibujo (trazos)
-        let drawingImage = canvasView.drawing.image(from: bounds, scale: 1.0)
-        
-        // Pintamos fondo blanco + dibujo encima
-        let renderer = UIGraphicsImageRenderer(size: bounds.size)
+
+        // Añadimos un pequeño margen alrededor del dibujo
+        let padding: CGFloat = 10
+        bounds = bounds.insetBy(dx: -padding, dy: -padding)
+
+        // Nos aseguramos de no salirnos del lienzo
+        bounds = bounds.intersection(canvasView.bounds)
+
+        // Imagen solo de la zona donde hay trazos
+        let drawingImage = drawing.image(from: bounds, scale: 1.0)
+
+        // Hacemos un lienzo cuadrado para centrar el dígito
+        let side = max(bounds.width, bounds.height)
+        let squareSize = CGSize(width: side, height: side)
+
+        let renderer = UIGraphicsImageRenderer(size: squareSize)
         let img = renderer.image { ctx in
+            // Fondo blanco
             UIColor.white.setFill()
-            ctx.fill(CGRect(origin: .zero, size: bounds.size))
-            drawingImage.draw(in: CGRect(origin: .zero, size: bounds.size))
+            ctx.fill(CGRect(origin: .zero, size: squareSize))
+
+            // Dibujamos la imagen del dígito centrada en el cuadrado
+            let x = (side - bounds.width) / 2
+            let y = (side - bounds.height) / 2
+            drawingImage.draw(in: CGRect(x: x, y: y, width: bounds.width, height: bounds.height))
         }
-        
+
         return img
     }
     
