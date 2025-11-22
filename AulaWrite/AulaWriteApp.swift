@@ -16,7 +16,6 @@ struct AulaWriteApp: App {
                 if showSplash {
                     SplashView()
                         .onAppear {
-                            // Tras 1.5 segundos, pasamos a la pantalla principal
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                                 withAnimation {
                                     showSplash = false
@@ -24,13 +23,11 @@ struct AulaWriteApp: App {
                             }
                         }
                 } else {
-                    // 👇 IMPORTANTE: OperationView dentro de NavigationStack
-                    NavigationStack {
-                        OperationView()  // aquí es donde empieza la app
-                        .statusBarHidden(true)
-                    }
+                    // 👇 nueva pantalla previa
+                    OperationSelectorView()
                 }
             }
+            .statusBarHidden(true)
         }
     }
 }

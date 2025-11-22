@@ -101,7 +101,9 @@ extension UIImage {
         guard let cgImage = self.cgImage else { return nil }
         context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
         
+        
         // Invertimos valores si hace falta (lo ideal para MNIST)
+
         if invert {
             let height = CVPixelBufferGetHeight(pb)
             let width  = CVPixelBufferGetWidth(pb)
@@ -114,7 +116,8 @@ extension UIImage {
                 }
             }
         }
-        
+  
+ 
         return pb
     }
 }

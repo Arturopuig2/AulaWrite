@@ -68,9 +68,9 @@ struct DigitRecognizerView: View {
                 Button("Borrar") {
                     clearCanvas()
                 }
-                Button("Reconocer") {
-                    recognizeDigit()
-                }
+              //  Button("Reconocer") {
+                //    recognizeDigit()
+                //}
             }
             .font(.headline)
         }

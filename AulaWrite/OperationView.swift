@@ -8,16 +8,25 @@
 import SwiftUI
 
 struct OperationView: View {
+    
+    let operationType: OperationType   // 👈 viene de fuera
+
     @State private var n1: Int = 2
     @State private var n2: Int = 2
     
     @State private var predictedDigit: String = ""
     @State private var feedback: String = ""
     @State private var isCorrect: Bool? = nil   // nil = aún sin corregir
+
     
     var correctResult: Int {
-        n1 + n2
+        switch operationType {
+        case .suma: return n1 + n2
+        case .resta: return n1 - n2
+        case .multiplicacion: return n1 * n2
+        }
     }
+    
     
     var body: some View {
         ZStack {
@@ -36,7 +45,7 @@ struct OperationView: View {
                     Text("\(n1)")
                         .font(.system(size: 120, weight: .bold, design: .monospaced))
                     
-                    Text("+ \(n2)")
+                    Text("\(operationType.symbol) \(n2)")
                         .font(.system(size: 120, weight: .bold, design: .monospaced))
 
                     Rectangle()
@@ -48,26 +57,43 @@ struct OperationView: View {
                 // Lienzo para escribir el resultado
                 DigitRecognizerView(predictedDigit: $predictedDigit)
                     .frame(width: 200, height: 200)
+                   // .frame(width: 28, height: 28)
                     .offset(x:10)
                     //.border(Color.black, width: 1)
                 
 
                 //PARA QUE ME MUESTRE EL NÚMERO (Y SABER SI LO ESTÁ RECONOCIENDO BIEN)
                 if !predictedDigit.isEmpty {
-                    Text("He reconocido: \(predictedDigit)")
-                        .font(.title2)
-                        .foregroundColor(.blue)
+                   // Text("He reconocido: \(predictedDigit)")
+                     //   .font(.title2)
+                      //  .foregroundColor(.blue)
                 }
 
+                
+                
                 // Botones
                 HStack(spacing: 20) {
-                    Button("Comprobar") {
+                   // Button("Comprobar") {
+                     //   checkAnswer()
+                    //}
+
+                    Button(action: {
                         checkAnswer()
+                    }){
+                        Image(systemName: "checkmark.circle.fill")   // ← icono de Apple SF Symbols
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60, height: 60)            // tamaño del botón
+                        .foregroundColor(.blue)                  // color del icono
+                        //.padding()
                     }
-                    .font(.title2)
+                    
+                    
+                   // .font(.title2)
                     
                     Button("Siguiente") {
                         nextExercise()
+                        
                     }
                     .font(.title2)
                 }
@@ -124,13 +150,23 @@ struct OperationView: View {
     
     //FUNCIÓN DE LAS OPERACIONES
     private func nextExercise() {
-        n1 = Int.random(in: 0...9)
-        n2 = Int.random(in: 0...(9 - n1))   // así n1 + n2 nunca pasa de 9
+        switch operationType {
+        case .suma:
+            n1=Int.random(in: 0...9)
+            n2=Int.random(in: 0...(9-n1)) //ASEGURA RESULDAOD <=9
+        case .resta:
+            n1=Int.random(in: 0...9)
+            n2=Int.random(in: 0...n1)  //ASEGURA RESULTADO POSITIVO
+        case .multiplicacion:
+            repeat {
+                n1=Int.random(in: 0...9)
+                n2=Int.random(in: 0...9)
+            } while n1 * n2 > 9
+        }
         
         predictedDigit = ""
         feedback = ""
         isCorrect = nil
-        
         
         // Enviar orden de “borrar el lienzo”
         NotificationCenter.default.post(name: .clearCanvas, object: nil)
@@ -139,8 +175,8 @@ struct OperationView: View {
 
 #Preview {
     NavigationStack {
-        OperationView()
+        OperationView(operationType: .suma)
             .statusBarHidden(true)
-
     }
 }
+
