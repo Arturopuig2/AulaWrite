@@ -6,19 +6,22 @@ AulaWrite es una aplicación educativa creada en **SwiftUI**, diseñada para que
 ---
 
 # 🖼️ Capturas del Proyecto  
-*(Estas rutas deben reemplazarse por imágenes reales del proyecto)*
+
+## 🚀 Pantalla de selección
+![Splash](./Screenshots/seleccion.png)
 
 ## 📱 Pantalla Principal (OperationView)
+
 ![OperationView](./Screenshots/operation_view.png)
+
 
 ## ✍️ Lienzo para escribir dígitos (Canvas)
 ![Canvas](./Screenshots/canvas.png)
 
 ## 🤖 Asistente Inteligente RAG
-![RAGChatView](./Screenshots/rag_view.png)
+![RAGChatView](./Screenshots/rag_view1.png)
+![RAGChatView](./Screenshots/rag_view2.png)
 
-## 🚀 Splash de inicio
-![Splash](./Screenshots/splash.png)
 
 ---
 
@@ -28,8 +31,8 @@ AulaWrite es una aplicación educativa creada en **SwiftUI**, diseñada para que
 - SwiftUI  
 - PencilKit (canvas)  
 - CoreML (modelo de dígitos)  
-- AVFoundation (audio TTS opcional)  
-- NavigationStack  
+- AVFoundation (audio TTS)  
+- NavigationStack
 
 ### 🤖 Backend RAG (Python)
 - FastAPI  
@@ -102,8 +105,6 @@ El asistente permite al alumno preguntar:
 
 ## Flujo RAG completo:
 
-![Diagrama RAG](./Screenshots/rag_diagram.png)
-
 1. SwiftUI envía la pregunta al backend  
 2. FastAPI recupera documentos relacionados desde SQLite  
 3. Construye un prompt educativo (profesora de Primaria)  
@@ -153,7 +154,7 @@ AulaWrite/
 ├── AppleDigitRecognizer.swift
 ├── modelo_digitos.mlpackage
 ├── Assets.xcassets/
-└── Screenshots/           ← colocar capturas aquí
+└── Screenshots/          
 ```
 
 ---
@@ -174,9 +175,4 @@ uvicorn api:app --reload --host 127.0.0.1 --port 8000
 ---
 
 # 📄 Licencia  
-MIT (o la que elijas)
-
----
-
-# 🎉 Fin del README  
-Este archivo está listo para usarse en GitHub.
+MIT
