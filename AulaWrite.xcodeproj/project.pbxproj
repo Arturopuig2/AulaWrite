@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -26,10 +26,8 @@
 /* Begin PBXFrameworksBuildPhase section */
 		69B4A70C2EC8E7F6001D8DC6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -64,14 +62,10 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				69B4A7112EC8E7F6001D8DC6 /* AulaWrite */,
 			);
 			name = AulaWrite;
-			packageProductDependencies = (
-			);
 			productName = AulaWrite;
 			productReference = 69B4A70F2EC8E7F6001D8DC6 /* AulaWrite.app */;
 			productType = "com.apple.product-type.application";
@@ -100,7 +94,7 @@
 			);
 			mainGroup = 69B4A7062EC8E7F6001D8DC6;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
+			preferredProjectObjectVersion = 90;
 			productRefGroup = 69B4A7102EC8E7F6001D8DC6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -113,26 +107,22 @@
 /* Begin PBXResourcesBuildPhase section */
 		69B4A70D2EC8E7F6001D8DC6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		69B4A70B2EC8E7F6001D8DC6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				695ABAF72ECF2C61006E63EC /* SplashView.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		69B4A71D2EC8E7F8001D8DC6 /* Debug */ = {
+		69B4A71D2EC8E7F8001D8DC6 /* Debug configuration for PBXProject "AulaWrite" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -195,7 +185,7 @@
 			};
 			name = Debug;
 		};
-		69B4A71E2EC8E7F8001D8DC6 /* Release */ = {
+		69B4A71E2EC8E7F8001D8DC6 /* Release configuration for PBXProject "AulaWrite" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -251,14 +241,14 @@
 			};
 			name = Release;
 		};
-		69B4A7202EC8E7F8001D8DC6 /* Debug */ = {
+		69B4A7202EC8E7F8001D8DC6 /* Debug configuration for PBXNativeTarget "AulaWrite" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7FB9MU3XYA;
+				DEVELOPMENT_TEAM = 3444TFK9RT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -266,12 +256,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = itbook.AulaWrite;
+				PRODUCT_BUNDLE_IDENTIFIER = itbook.AulaWrite2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -283,7 +274,7 @@
 			};
 			name = Debug;
 		};
-		69B4A7212EC8E7F8001D8DC6 /* Release */ = {
+		69B4A7212EC8E7F8001D8DC6 /* Release configuration for PBXNativeTarget "AulaWrite" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -291,7 +282,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7FB9MU3XYA;
+				DEVELOPMENT_TEAM = 3444TFK9RT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -299,6 +290,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -323,19 +315,17 @@
 		69B4A70A2EC8E7F6001D8DC6 /* Build configuration list for PBXProject "AulaWrite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				69B4A71D2EC8E7F8001D8DC6 /* Debug */,
-				69B4A71E2EC8E7F8001D8DC6 /* Release */,
+				69B4A71D2EC8E7F8001D8DC6 /* Debug configuration for PBXProject "AulaWrite" */,
+				69B4A71E2EC8E7F8001D8DC6 /* Release configuration for PBXProject "AulaWrite" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		69B4A71F2EC8E7F8001D8DC6 /* Build configuration list for PBXNativeTarget "AulaWrite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				69B4A7202EC8E7F8001D8DC6 /* Debug */,
-				69B4A7212EC8E7F8001D8DC6 /* Release */,
+				69B4A7202EC8E7F8001D8DC6 /* Debug configuration for PBXNativeTarget "AulaWrite" */,
+				69B4A7212EC8E7F8001D8DC6 /* Release configuration for PBXNativeTarget "AulaWrite" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
