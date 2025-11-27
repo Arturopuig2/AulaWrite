@@ -1,103 +1,130 @@
 import SwiftUI
 import AVKit
+import AVFoundation
+import Foundation
 
 struct RAGMessage: Identifiable {
     let id = UUID()
-    let text: String
-    let isUser: Bool
-    let videoURL: URL?
+    var text: String
+    var isUser: Bool
+    var videoURL: URL?
+    var audioURL: URL?
 }
 
 struct RAGChatView: View {
     @State private var inputText: String = ""
     @State private var messages: [RAGMessage] = []
     @State private var isLoading: Bool = false
+    @State private var audioPlayer: AVPlayer?
+    @State private var videoPlayer: AVPlayer?
+    
+    @State private var currentAudioURL: URL?
+    @State private var isAudioPlaying: Bool = false
 
     private var hasTeacherResponse: Bool {
         messages.contains { !$0.isUser }
     }
     
     var body: some View {
-        if !hasTeacherResponse {
-            VStack {
+        VStack {
+            // Cabecera inicial con la profe solo si aún no hay respuesta
+            if !hasTeacherResponse {
                 HStack {
                     Image("profesora_chat")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 100)      // tamaño, nada de alignment aquí
-                        .frame(maxWidth: .infinity, alignment: .leading)// ESTO LA ALINEA A LA IZQUIERDA
+                        .frame(width: 100)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.leading, 50)
                         .padding(.top, -40)
                 }
-                // Tu contenido debajo
-                Text("")
             }
-        }
-        
-        VStack {
+            
             // 🟦 ZONA DE MENSAJES CON SCROLL
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 12) {
-                    ForEach(messages) { msg in
-                        HStack {
-                            if msg.isUser { Spacer() }
-                            
-                            VStack(
-                                alignment: msg.isUser ? .trailing : .leading,
-                                spacing: 8
-                            ) {
-                                // 💬 BURBUJA DE TEXTO
-                                Text(msg.text)
-                                    .font(.system(size: 26))
-                                    .padding(10)
-                                    .background(msg.isUser ? Color.blue.opacity(0.2) : Color.white.opacity(0))
-                                    .cornerRadius(12)
-                                    // 👇 ancho máximo relativo, sin UIScreen.main
-                                    .frame(maxWidth: .infinity,
-                                           alignment: msg.isUser ? .trailing : .leading)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 12) {
+                        ForEach(messages) { msg in
+                            HStack {
+                                // Mensaje del asistente → izquierda
+                                if msg.isUser { Spacer().frame(width: 0) }
                                 
-                                // 🎥 VÍDEO DEBAJO DEL TEXTO (solo RAG)
-                                if let videoURL = msg.videoURL, !msg.isUser {
-                                    VideoPlayer(player: AVPlayer(url: videoURL))
-                                        .frame(height: 220)
-                                        .cornerRadius(12)
-                                        .shadow(radius: 4)
+                                VStack(alignment: msg.isUser ? .trailing : .leading, spacing: 8) {
+                                    
+                                    // 💬 BURBUJA DE TEXTO
+                                    Text(msg.text)
+                                        .font(.system(size: 26))
+                                        .padding(12)
+                                        .background(
+                                            msg.isUser
+                                            ? Color.blue.opacity(0.20)
+                                            : Color.white.opacity(0)
+                                        )
+                                        .cornerRadius(14)
+                                        .frame(
+                                            maxWidth: .infinity,         // ← ANCHO COMPLETO IPAD
+                                            alignment: msg.isUser ? .trailing : .leading
+                                        )
+                                    
+                                    // 🎧 BOTÓN DE AUDIO (play / pausa)
+                                    if let audio = msg.audioURL {
+                                        Button {
+                                            toggleAudio(for: audio)
+                                        } label: {
+                                            HStack {
+                                                Image(systemName: audioButtonImageName(for: audio))
+                                                Text(audioButtonTitle(for: audio))
+                                            }
+                                            .font(.headline)
+                                            .foregroundColor(.blue)
+                                        }
+                                    }
+                                    
+                                    // 🎬 VIDEO (si existe videoURL)
+                                    if let video = msg.videoURL {
+                                        VideoPlayer(player: AVPlayer(url: video))
+                                            .frame(height: 160)
+                                            .cornerRadius(12)
+                                    }
                                 }
+                                .frame(maxWidth: .infinity, alignment: msg.isUser ? .trailing : .leading)
+                                
+                                // Mensaje del usuario → derecha
+                                if msg.isUser { Spacer().frame(width: 0) }
                             }
-                            .padding(.horizontal, 40) // limita el ancho real de la burbuja
-                            
-                            if !msg.isUser { Spacer() }
+                            .padding(.horizontal)
+                            .id(msg.id)
                         }
                     }
                 }
-                .padding(.vertical)
+                // Autoscroll SIN animación
+                .onChange(of: messages.count) {
+                    if let last = messages.last {
+                        proxy.scrollTo(last.id, anchor: .bottom)
+                    }
+                }
             }
             
             Divider()
             
             // 🟧 ZONA DE ENTRADA
             HStack {
-               // TextField("Escribe tu pregunta…", text: $inputText, axis: .vertical)
-                 //   .textFieldStyle(.roundedBorder)
-                   // .lineLimit(1...3)
-                               
-                    
-                    ZStack(alignment: .topLeading) {
-                        if inputText.isEmpty {
-                            Text("Aquí tu pregunta…")
-                                .foregroundColor(.red)
-                                .font(.system(size: 26))
-                                .padding(.vertical, 16)
-                                .padding(.horizontal, 16)
-                        }
-
-                        TextEditor(text: $inputText)
-                            .frame(height: 100)
-                            .padding(8)
-                            .background(Color.blue.opacity(0.4))
-                            .cornerRadius(14)
+                ZStack(alignment: .topLeading) {
+                    if inputText.isEmpty {
+                        Text("Aquí tu pregunta…")
+                            .foregroundColor(.red)
                             .font(.system(size: 26))
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 16)
                     }
+
+                    TextEditor(text: $inputText)
+                        .frame(height: 100)
+                        .padding(8)
+                        .background(Color.blue.opacity(0.4))
+                        .cornerRadius(14)
+                        .font(.system(size: 26))
+                }
                 
                 if isLoading {
                     ProgressView()
@@ -107,7 +134,7 @@ struct RAGChatView: View {
                         sendMessage()
                     } label: {
                         Image(systemName: "paperplane.fill")
-                            .font(.largeTitle.bold().pointSize(40))
+                            .font(.largeTitle)
                     }
                     .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
@@ -123,30 +150,23 @@ struct RAGChatView: View {
                 }
             }
         }
-        
-        VStack {
-            HStack {
-                Spacer()
-                // empuja la imagen a la derecha
-                //Image("profesora_chat")          // nombre en Assets.xcassets
-                  //  .resizable()
-                    //.scaledToFit()
-                    .frame(width: 80, height: 80)
-                    //.padding(.trailing, 20)
-                    //.padding(.top, 20)
-            }
-
-            // Tu contenido debajo
-            Text("")
-        }
-        
     }
+    
     
     private func sendMessage() {
         let question = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !question.isEmpty else { return }
         
-        messages.append(RAGMessage(text: question, isUser: true, videoURL: nil))
+        // Mensaje del alumno
+        messages.append(
+            RAGMessage(
+                text: question,
+                isUser: true,
+                videoURL: nil,
+                audioURL: nil
+            )
+        )
+        
         inputText = ""
         isLoading = true
         
@@ -155,11 +175,13 @@ struct RAGChatView: View {
                 let result = try await RAGService.ask(question)
                 
                 await MainActor.run {
+                    // Mensaje de la profe
                     messages.append(
                         RAGMessage(
                             text: result.answer,
                             isUser: false,
-                            videoURL: result.videoURL
+                            videoURL: result.videoURL,
+                            audioURL: result.audioURL
                         )
                     )
                     isLoading = false
@@ -170,7 +192,8 @@ struct RAGChatView: View {
                         RAGMessage(
                             text: "Error al conectar con el servidor RAG.",
                             isUser: false,
-                            videoURL: nil
+                            videoURL: nil,
+                            audioURL: nil
                         )
                     )
                     isLoading = false
@@ -178,8 +201,42 @@ struct RAGChatView: View {
             }
         }
     }
+    
+    
+    // MARK: - Control de audio (play / pausa)
+    
+    private func isPlaying(url: URL) -> Bool {
+        currentAudioURL == url && isAudioPlaying
+    }
+    
+    private func toggleAudio(for url: URL) {
+        // Si ya estamos reproduciendo este mismo audio, hacemos pausa / reanudar
+        if currentAudioURL == url, let player = audioPlayer {
+            if player.timeControlStatus == .playing {
+                player.pause()
+                isAudioPlaying = false
+            } else {
+                player.play()
+                isAudioPlaying = true
+            }
+        } else {
+            // Es un audio nuevo: creamos player nuevo y reproducimos
+            audioPlayer = AVPlayer(url: url)
+            currentAudioURL = url
+            audioPlayer?.play()
+            isAudioPlaying = true
+        }
+    }
+    
+    private func audioButtonImageName(for url: URL) -> String {
+        isPlaying(url: url) ? "pause.circle.fill" : "play.circle.fill"
+    }
+    
+    private func audioButtonTitle(for url: URL) -> String {
+        isPlaying(url: url) ? "Pausar audio" : "Escuchar respuesta"
+    }
+    
 }
-
 
 // Vista de preview (solo para ver en el canvas de Xcode)
 struct RAGChatView_Previews: PreviewProvider {
@@ -189,3 +246,23 @@ struct RAGChatView_Previews: PreviewProvider {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

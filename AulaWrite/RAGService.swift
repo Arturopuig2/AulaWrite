@@ -7,6 +7,7 @@ import Foundation
 struct RAGResponse: Decodable {
     let answer: String
     let video_url:String?
+    let audio_url:String?
 }
 
 // MARK: - Errores de red
@@ -22,6 +23,7 @@ enum RAGServiceError: Error {
 struct RAGServiceResult {
     let answer: String
     let videoURL: URL?
+    let audioURL: URL?
 }
 
 struct RAGService {
@@ -76,8 +78,15 @@ struct RAGService {
         } else {
             fullVideoURL = nil
         }
+
+        let fullAudioURL: URL?
+        if let audioPath = decoded.audio_url {
+            fullAudioURL = URL(string: baseURLString + audioPath)
+        } else {
+            fullAudioURL = nil
+        }
         
-        return RAGServiceResult(answer: decoded.answer, videoURL: fullVideoURL)
+        return RAGServiceResult(answer: decoded.answer, videoURL: fullVideoURL, audioURL: fullAudioURL)
 
     }
 }
