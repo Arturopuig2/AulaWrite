@@ -19,6 +19,7 @@ struct SplashView: View {
                     .font(.headline)
                     .foregroundColor(.gray)
             }
+            .statusBarHidden(true)
         }
     }
 }
