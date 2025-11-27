@@ -1,0 +1,7 @@
+openai>=1.50.0
+tiktoken
+numpy
+pandas
+scikit-learn
+gradio
+python-dotenv
